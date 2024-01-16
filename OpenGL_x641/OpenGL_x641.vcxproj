@@ -19,8 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\mainProjection.cpp" />
     <ClCompile Include="src\ShaderProgram.cpp" />
+    <ClCompile Include="src\Text.cpp" />
     <ClCompile Include="src\texture.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -28,6 +28,8 @@
     <ClInclude Include="src\texture.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="res\shaders\text.frag" />
+    <None Include="res\shaders\text.vert" />
     <None Include="res\shaders\transform.frag" />
     <None Include="res\shaders\transform.vert" />
   </ItemGroup>
