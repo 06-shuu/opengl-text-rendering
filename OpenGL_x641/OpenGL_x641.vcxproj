@@ -20,12 +20,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\ShaderProgram.cpp" />
-    <ClCompile Include="src\Text.cpp" />
-    <ClCompile Include="src\texture.cpp" />
+    <ClCompile Include="src\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ShaderProgram.h" />
-    <ClInclude Include="src\texture.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\text.frag" />

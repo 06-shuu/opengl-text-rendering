@@ -13,10 +13,8 @@
 #include "ft2build.h" 
 #include FT_FREETYPE_H 
 
-
-//my custom headers
+//custom header
 #include "ShaderProgram.h"  
-
 
 // Global Variables
 const char* APP_TITLE = "Text rendering using Freetype ";
@@ -26,7 +24,6 @@ GLFWwindow* gWindow = NULL;
 bool gWireframe = false;
 
 
-// Shaders
 
 // Function prototypes
 void glfw_onKey(GLFWwindow* window, int key, int scancode, int action, int mode);
