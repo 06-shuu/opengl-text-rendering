@@ -2,7 +2,7 @@
 #include <map>
 #include <string>
 #include <sstream>
- 
+
 #define GLEW_STATIC
 #include "GL/glew.h"	// Important - this header must come before glfw3 header
 #include "GLFW/glfw3.h"
@@ -16,7 +16,6 @@
 
 //my custom headers
 #include "ShaderProgram.h"  
-#include "texture.h"
 
 
 // Global Variables
@@ -25,26 +24,6 @@ const int gWindowWidth = 800;
 const int gWindowHeight = 600;
 GLFWwindow* gWindow = NULL;
 bool gWireframe = false;
-const std::string texture1FileName = "res/texture/wall.jpg";
-const std::string texture2FileName = "res/texture/mario.png";
-
-
-//experimenting with transformation:
-
-//1. translate
-bool transDirection = true;
-float offset = 0.0f;
-float increment = 0.001f;
-float maxOffset = 0.9f;
-
-//2.rotate
-float curAngle = 0.0f;
-
-//2.scale
-bool sizeDirection = true;
-float maxSize = 0.8f;
-float minSize = 0.1f;
-float curSize = 0.3f;
 
 
 // Shaders
@@ -80,95 +59,10 @@ int main()
 		return -1;
 	}
 
-	// Set up our quad
-
-	// 1. Set up an array of vertices for a quad (2 triangls) with an index buffer data
-	//   (What is a vertex?)
-	GLfloat vertices[] = {
-		// position		 // tex coords
-
-	   // front face
-	   -1.0f,  1.0f,  1.0f, 0.0f, 1.0f,
-		1.0f, -1.0f,  1.0f, 1.0f, 0.0f,
-		1.0f,  1.0f,  1.0f, 1.0f, 1.0f,
-	   -1.0f,  1.0f,  1.0f, 0.0f, 1.0f,
-	   -1.0f, -1.0f,  1.0f, 0.0f, 0.0f,
-		1.0f, -1.0f,  1.0f, 1.0f, 0.0f,
-
-		// back face
-		-1.0f,  1.0f, -1.0f, 0.0f, 1.0f,
-		 1.0f, -1.0f, -1.0f, 1.0f, 0.0f,
-		 1.0f,  1.0f, -1.0f, 1.0f, 1.0f,
-		-1.0f,  1.0f, -1.0f, 0.0f, 1.0f,
-		-1.0f, -1.0f, -1.0f, 0.0f, 0.0f,
-		 1.0f, -1.0f, -1.0f, 1.0f, 0.0f,
-
-		 // left face
-		 -1.0f,  1.0f, -1.0f, 0.0f, 1.0f,
-		 -1.0f, -1.0f,  1.0f, 1.0f, 0.0f,
-		 -1.0f,  1.0f,  1.0f, 1.0f, 1.0f,
-		 -1.0f,  1.0f, -1.0f, 0.0f, 1.0f,
-		 -1.0f, -1.0f, -1.0f, 0.0f, 0.0f,
-		 -1.0f, -1.0f,  1.0f, 1.0f, 0.0f,
-
-		 // right face
-		  1.0f,  1.0f,  1.0f, 0.0f, 1.0f,
-		  1.0f, -1.0f, -1.0f, 1.0f, 0.0f,
-		  1.0f,  1.0f, -1.0f, 1.0f, 1.0f,
-		  1.0f,  1.0f,  1.0f, 0.0f, 1.0f,
-		  1.0f, -1.0f,  1.0f, 0.0f, 0.0f,
-		  1.0f, -1.0f, -1.0f, 1.0f, 0.0f,
-
-		  // top face
-		 -1.0f,  1.0f, -1.0f, 0.0f, 1.0f,
-		  1.0f,  1.0f,  1.0f, 1.0f, 0.0f,
-		  1.0f,  1.0f, -1.0f, 1.0f, 1.0f,
-		 -1.0f,  1.0f, -1.0f, 0.0f, 1.0f,
-		 -1.0f,  1.0f,  1.0f, 0.0f, 0.0f,
-		  1.0f,  1.0f,  1.0f, 1.0f, 0.0f,
-
-		  // bottom face
-		 -1.0f, -1.0f,  1.0f, 0.0f, 1.0f,
-		  1.0f, -1.0f, -1.0f, 1.0f, 0.0f,
-		  1.0f, -1.0f,  1.0f, 1.0f, 1.0f,
-		 -1.0f, -1.0f,  1.0f, 0.0f, 1.0f,
-		 -1.0f, -1.0f, -1.0f, 0.0f, 0.0f,
-		  1.0f, -1.0f, -1.0f, 1.0f, 0.0f,
-	};
-
-	//cube position
-	glm::vec3 CubePos(0.0f, 0.0f, -5.5f);
-
-
-	// 2. Set up buffers on the GPU
-	GLuint vbo, vao;
-
-	glGenBuffers(1, &vbo);					// Generate an empty vertex buffer on the GPU
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);		// "bind" or set as the current buffer we are working with
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);	// copy the data from CPU to GPU
-
-	glGenVertexArrays(1, &vao);				// Tell OpenGL to create new Vertex Array Object
-	glBindVertexArray(vao);					// Make it the current one
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);	// Define a layout for the first vertex buffer "0"
-	glEnableVertexAttribArray(0);			// Enable the first attribute or attribute "0"
-
-	//for texture
-
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(1);			// Enable the first attribute or attribute "0"
-
-	/*glEnable(GL_CULL_FACE);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);*/
 
 	//call shaders
 	ShaderProgram cubeShader, textShader;
-	cubeShader.loadShaders("res/shaders/transform.vert", "res/shaders/transform.frag");
 	textShader.loadShaders("res/shaders/text.vert", "res/shaders/text.frag");
-
-	/*glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(gWindowWidth), 0.0f, static_cast<float>(gWindowHeight));
-	shader.use();
-	glUniformMatrix4fv(glGetUniformLocation(shader.getProgram(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));*/
 
 	FT_Library ft;
 	// All functions return a value different than 0 whenever an error occurred
@@ -255,15 +149,6 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	////**********************
-	//// TEXTURE
-	//// *********************
-	Texture texture1;
-	texture1.loadTexture(texture1FileName, true);
-
-	Texture texture2;
-	texture2.loadTexture(texture2FileName, true);
-
 
 	double lastTime = glfwGetTime();
 	float cubeAngle = 0.0f;
@@ -281,57 +166,9 @@ int main()
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glEnable(GL_DEPTH_TEST);
-
-		glEnable(GL_CULL_FACE);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 
 		glm::mat4 projection(1.0);
 		glm::mat4 model(1.0), view(1.0);
-
-
-		// Render the quad (two triangles)
-		cubeShader.use();
-		//write code for texture here (to bind it)
-		texture1.bind(0);
-		texture2.bind(1);
-		glUniform1i(glGetUniformLocation(cubeShader.getProgram(), "texSampler1"), 0); //in one line
-		glUniform1i(glGetUniformLocation(cubeShader.getProgram(), "texSampler2"), 1); //in one line
-
-
-		//Animation
-		if (transDirection)
-			offset += increment;
-		else
-			offset -= increment;
-		if (abs(offset) >= maxOffset)
-			transDirection = !transDirection;
-
-		//rotation
-		curAngle += 0.05f;
-		if (curAngle >= 360)
-			curAngle -= 360;
-
-		//scalling 
-		if (sizeDirection)
-			curSize += 0.001f;
-		else
-			curSize -= 0.001f;
-		if (curSize >= maxSize || curSize <= minSize)
-			sizeDirection = !sizeDirection;
-
-		//use deltaTime
-		cubeAngle += (float)deltaTime * 50;
-		if (cubeAngle >= 360)
-			cubeAngle = 0.0f;
-
-
-		model = glm::translate(model, CubePos) * glm::rotate(model, glm::radians(cubeAngle), glm::vec3(0.0f, 1.0f, 0.0f));
-		projection = glm::perspective(glm::radians(45.0f), (float)gWindowWidth / gWindowHeight, 0.1f, 100.0f);
-		//2 for x   //2 for y   //2 for z
-		//projection = glm::ortho(0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 5.0f);
 
 
 		//pass the uniforms to the shaders
@@ -339,27 +176,19 @@ int main()
 		cubeShader.setUniform("view", view);
 		cubeShader.setUniform("projection", projection);
 
-		glBindVertexArray(vao);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-		glBindVertexArray(0);
 
 		textShader.use();
 		projection = glm::ortho(0.0f, static_cast<float>(gWindowWidth), 0.0f, static_cast<float>(gWindowHeight));
-		
+
 		glUniformMatrix4fv(glGetUniformLocation(textShader.getProgram(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-		RenderText(textShader, "This is sample text", 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-		RenderText(textShader, "(C) LearnOpenGL.com", 540.0f, 570.0f, 0.5f, glm::vec3(0.3, 0.7f, 0.9f));
+		RenderText(textShader, "This is sample text", 25.0f, 25.0f, 1.0f, glm::vec3(0.0, 0.0f, 0.0f));
+		RenderText(textShader, "(C) LearnOpenGL.com", 540.0f, 570.0f, 0.5f, glm::vec3(0.0, 0.0f, 0.0f));
 
 		// Swap front and back buffers
 		glfwSwapBuffers(gWindow);
 
 		lastTime = cuurentTime;
 	}
-
-	// Clean up
-
-	glDeleteVertexArrays(1, &vao);
-	glDeleteBuffers(1, &vbo);
 
 
 	glfwTerminate();
@@ -410,18 +239,20 @@ bool initOpenGL()
 	glfwSetKeyCallback(gWindow, glfw_onKey);
 	glfwSetFramebufferSizeCallback(gWindow, glfw_onFramebufferSize);
 
-	glClearColor(0.23f, 0.38f, 0.47f, 1.0f);
+	glClearColor(1.0f, 0.5f, 0.7f, 1.0f);
+
 	//glClear(GL_COLOR_BUFFER_BIT);
 
 	// Define the viewport dimensions
 	glViewport(0, 0, gWindowWidth, gWindowHeight);
 
-	////enable depth testing
-	//glEnable(GL_DEPTH_TEST);
+	//enable depth testing
+	glEnable(GL_DEPTH_TEST);
 
-	//glEnable(GL_CULL_FACE);
-	//glEnable(GL_BLEND);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 
 	return true;
 }
