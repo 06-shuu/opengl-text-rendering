@@ -19,7 +19,7 @@
 
 
 // Global Variables
-const char* APP_TITLE = "Computer Graphics - Projection Demo";
+const char* APP_TITLE = "Text rendering using Freetype ";
 const int gWindowWidth = 800;
 const int gWindowHeight = 600;
 GLFWwindow* gWindow = NULL;
@@ -95,7 +95,7 @@ int main()
 	}
 
 	// find path to font
-	std::string font_name = "res/fonts/arial.ttf";
+	std::string font_name = "res/fonts/SNAP____.TTF";
 	if (font_name.empty())
 	{
 		std::cout << "ERROR::FREETYPE: Failed to load font_name" << std::endl;
@@ -188,30 +188,21 @@ int main()
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glm::mat4 projection(1.0);
-		glm::mat4 model(1.0), view(1.0);
-
-
-		/*glEnable(GL_DEPTH_TEST);
-		glDisable(GL_BLEND);*/
+		//=====RENDERING THE TRIANGLE
 		triangle.use();
 		glBindVertexArray(vao);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		glBindVertexArray(0); //unbind
 
-
-		
-		glEnable(GL_CULL_FACE);
-		glDisable(GL_DEPTH_TEST);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+		//RENDERING THE TEXT
+		glm::mat4 projection(1.0), model(1.0), view(1.0);
 		textShader.use();
 		projection = glm::ortho(0.0f, static_cast<float>(gWindowWidth), 0.0f, static_cast<float>(gWindowHeight));
-
 		glUniformMatrix4fv(glGetUniformLocation(textShader.getProgram(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-		RenderText(textShader, "This is sample text", 25.0f, 25.0f, 1.0f, glm::vec3(0.0, 0.0f, 0.0f));
-		RenderText(textShader, "(C) LearnOpenGL.com", 540.0f, 570.0f, 0.5f, glm::vec3(0.0, 0.0f, 0.0f));
+		RenderText(textShader, "0.0", 160.0f, 300.0f, 0.7f, glm::vec3(0.0, 0.0f, 0.0f));
+		RenderText(textShader, "u", 180.0f, 280.0f, 0.7f, glm::vec3(0.0, 0.0f, 0.0f));
+		RenderText(textShader, "this is my cutie triangle!", 160.0f, 200.0f, 0.7f, glm::vec3(0.0, 0.0f, 0.0f));
+
 
 		// Swap front and back buffers
 		glfwSwapBuffers(gWindow);
@@ -276,11 +267,7 @@ bool initOpenGL()
 	glViewport(0, 0, gWindowWidth, gWindowHeight);
 
 	//enable depth testing
-	//glEnable(GL_DEPTH_TEST);
-
-	//glEnable(GL_CULL_FACE);
-	//glEnable(GL_BLEND);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_DEPTH_TEST);
 
 
 	return true;
@@ -315,6 +302,12 @@ void glfw_onFramebufferSize(GLFWwindow* window, int width, int height)
 
 void RenderText(ShaderProgram& shader, std::string text, float x, float y, float scale, glm::vec3 color)
 {
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	// Disable the depth test since the text is being rendered in 2D
+	glDisable(GL_DEPTH_TEST);
 	// activate corresponding render state	
 	shader.use();
 	glUniform3f(glGetUniformLocation(shader.getProgram(), "textColor"), color.x, color.y, color.z);
@@ -356,4 +349,15 @@ void RenderText(ShaderProgram& shader, std::string text, float x, float y, float
 	}
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glEnable(GL_DEPTH_TEST);
+
+	/**
+	* Optionally disable the blending
+	* Can be removed since the 3D world might have some parts that needs to be rendered (semi-)transparent
+	*/
+	glDisable(GL_BLEND);
 }
+
+//i found the solution for rendering the geometry and text at the same time here: https://gamedev.stackexchange.com/questions/179775/text-rendering-using-freetype-library-not-working-correctly
+//i modified the RenderText... 
