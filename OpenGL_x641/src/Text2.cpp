@@ -200,11 +200,11 @@ int main()
 		glBindVertexArray(0); //unbind
 
 
-		
-		glEnable(GL_CULL_FACE);
+
+		/*glEnable(GL_CULL_FACE);
 		glDisable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);*/
 
 		textShader.use();
 		projection = glm::ortho(0.0f, static_cast<float>(gWindowWidth), 0.0f, static_cast<float>(gWindowHeight));
@@ -315,6 +315,12 @@ void glfw_onFramebufferSize(GLFWwindow* window, int width, int height)
 
 void RenderText(ShaderProgram& shader, std::string text, float x, float y, float scale, glm::vec3 color)
 {
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	// Disable the depth test since the text is being rendered in 2D
+	glDisable(GL_DEPTH_TEST);
 	// activate corresponding render state	
 	shader.use();
 	glUniform3f(glGetUniformLocation(shader.getProgram(), "textColor"), color.x, color.y, color.z);
@@ -356,4 +362,15 @@ void RenderText(ShaderProgram& shader, std::string text, float x, float y, float
 	}
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glEnable(GL_DEPTH_TEST);
+
+	/**
+	* Optionally disable the blending
+	* Can be removed since the 3D world might have some parts that needs to be rendered (semi-)transparent
+	*/
+	glDisable(GL_BLEND);
 }
+
+//i found the solution for rendering the geometry and text at the same time here: https://gamedev.stackexchange.com/questions/179775/text-rendering-using-freetype-library-not-working-correctly
+//i modified the RenderText... 

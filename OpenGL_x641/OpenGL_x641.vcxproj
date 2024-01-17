@@ -20,7 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\ShaderProgram.cpp" />
-    <ClCompile Include="src\Text.cpp" />
+    <ClCompile Include="src\Text2.cpp" />
     <ClCompile Include="src\texture.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -32,6 +32,8 @@
     <None Include="res\shaders\text.vert" />
     <None Include="res\shaders\transform.frag" />
     <None Include="res\shaders\transform.vert" />
+    <None Include="res\shaders\triangle.frag" />
+    <None Include="res\shaders\triangle.vert" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

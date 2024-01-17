@@ -21,7 +21,7 @@
     <ClCompile Include="src\texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Text.cpp">
+    <ClCompile Include="src\Text2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -38,5 +38,7 @@
     <None Include="res\shaders\transform.vert" />
     <None Include="res\shaders\text.frag" />
     <None Include="res\shaders\text.vert" />
+    <None Include="res\shaders\triangle.frag" />
+    <None Include="res\shaders\triangle.vert" />
   </ItemGroup>
 </Project>
