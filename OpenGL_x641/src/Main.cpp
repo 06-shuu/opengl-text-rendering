@@ -15,6 +15,8 @@
 //custom header
 #include "ShaderProgram.h"  
 #include "Freetype.h"
+#include "VAO.h"
+#include "VBO.h"
 
 // Global Variables
 const char* APP_TITLE = "Text rendering using Freetype ";
@@ -49,27 +51,21 @@ int main()
 		-0.5f,-0.5f,0.0f // for the lift point
 	};
 
-	//2. set up buffers on the GPU
-	GLuint vbo, vao;
 
-	glGenBuffers(1, &vbo); //create buffer
-	glBindBuffer(GL_ARRAY_BUFFER, vbo); //bind the buffer
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	VBO triangleVBO;
+	triangleVBO.bind();
+	triangleVBO.BufferData(sizeof(vertices), vertices);
 
-	//set the vao
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GL_FLOAT), (GLvoid*)0);
-
-	glEnableVertexAttribArray(0);
-
-
+	VAO triangleVAO;
+	triangleVAO.bind();
+	triangleVAO.Attribpointer(0, 3, GL_FLOAT, 3 * sizeof(GLfloat), (GLvoid*)0);
+	
 	//call shaders
 	ShaderProgram textShader, triangle;
 	textShader.loadShaders("res/shaders/text.vert", "res/shaders/text.frag");
 	triangle.loadShaders("res/shaders/triangle.vert", "res/shaders/triangle.frag");
 
-	
+	//====freetype===
 	FreeTypeFont font;
 	if (!font.initFreeType()) {
 		// Handle initialization failure
@@ -77,7 +73,7 @@ int main()
 	}
 
 	font.loadCharacters("res/fonts/SNAP____.TTF");
-
+	//===============
 
 	double lastTime = glfwGetTime();
 	float cubeAngle = 0.0f;
@@ -97,15 +93,15 @@ int main()
 
 		//=====RENDERING THE TRIANGLE
 		triangle.use();
-		glBindVertexArray(vao);
+		triangleVAO.bind();
 		glDrawArrays(GL_TRIANGLES, 0, 3);
-		glBindVertexArray(0); //unbind
+		triangleVAO.unbind();
 
 		//RENDERING THE TEXT
 		glm::mat4 projection(1.0), model(1.0), view(1.0);
 		textShader.use();
 		projection = glm::ortho(0.0f, static_cast<float>(gWindowWidth), 0.0f, static_cast<float>(gWindowHeight));
-		glUniformMatrix4fv(glGetUniformLocation(textShader.getProgram(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+		textShader.setUniform("projection", projection);
 		font.renderText(textShader, "0.0", 160.0f, 300.0f, 0.7f, glm::vec3(0.0, 0.0f, 0.0f));
 		font.renderText(textShader, "u", 180.0f, 280.0f, 0.7f, glm::vec3(0.0, 0.0f, 0.0f));
 		font.renderText(textShader, "this is my cutie triangle!", 160.0f, 200.0f, 0.7f, glm::vec3(0.0, 0.0f, 0.0f));
@@ -116,8 +112,6 @@ int main()
 		lastTime = cuurentTime;
 	}
 
-	glDeleteVertexArrays(1, &vao);
-	glDeleteBuffers(1, &vbo);
 	glfwTerminate();
 
 	return 0;

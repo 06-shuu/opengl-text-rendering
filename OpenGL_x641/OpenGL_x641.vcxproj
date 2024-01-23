@@ -22,10 +22,14 @@
     <ClCompile Include="src\Freetype.cpp" />
     <ClCompile Include="src\ShaderProgram.cpp" />
     <ClCompile Include="src\Main.cpp" />
+    <ClCompile Include="src\VAO.cpp" />
+    <ClCompile Include="src\VBO.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Freetype.h" />
     <ClInclude Include="src\ShaderProgram.h" />
+    <ClInclude Include="src\VAO.h" />
+    <ClInclude Include="src\VBO.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\text.frag" />
