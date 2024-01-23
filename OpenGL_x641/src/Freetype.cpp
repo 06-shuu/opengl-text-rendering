@@ -75,7 +75,6 @@ void FreeTypeFont::loadCharacters(const std::string& fontPath) {
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-    // ... (rest of the character loading code)
 
     FT_Done_Face(face);
     FT_Done_FreeType(ft);
@@ -84,10 +83,8 @@ void FreeTypeFont::loadCharacters(const std::string& fontPath) {
 void FreeTypeFont::renderText(ShaderProgram& shader, const std::string& text, float x, float y, float scale, const glm::vec3& color) {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	// Disable the depth test since the text is being rendered in 2D
 	glDisable(GL_DEPTH_TEST);
-	// activate corresponding render state	
+
 	shader.use();
 	glUniform3f(glGetUniformLocation(shader.getProgram(), "textColor"), color.x, color.y, color.z);
 	glActiveTexture(GL_TEXTURE0);
